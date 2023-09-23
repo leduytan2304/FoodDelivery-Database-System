@@ -1,0 +1,1 @@
+exec sp_XoaChiNhanh '8','DT001'

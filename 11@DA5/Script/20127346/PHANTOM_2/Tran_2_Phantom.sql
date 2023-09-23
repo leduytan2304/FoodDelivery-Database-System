@@ -1,0 +1,6 @@
+﻿exec sp_DT_ThemChiNhanh '8'
+	,'DT001'
+	,N'P5, Q.Gò Vấp'
+	,'NVC'
+	,'07:00:00'
+	,N'Mở cửa'

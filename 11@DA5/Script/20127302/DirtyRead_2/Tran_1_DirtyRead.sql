@@ -1,0 +1,1 @@
+﻿exec Sp_DT_THEMSP '20',N'kẹo',10000,'DT001','1','d',N'Còn hàng',''

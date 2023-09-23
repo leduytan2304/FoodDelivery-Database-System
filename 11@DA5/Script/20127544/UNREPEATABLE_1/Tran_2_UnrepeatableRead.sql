@@ -1,0 +1,3 @@
+exec CHANGE_PASSWORD
+	'QT1' ,
+	'1234598760'

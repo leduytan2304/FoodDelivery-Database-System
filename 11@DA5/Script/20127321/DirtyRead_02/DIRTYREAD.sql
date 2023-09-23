@@ -1,0 +1,57 @@
+--T1 đối tác cập nhật hợp đồng--
+--T2 khách hàng xem tình trạng hợp đồng-- 
+USE QL_DH_GH
+GO
+alter PROC DT_UPDATE_HD
+	@MaSoHopDong VARCHAR(15),
+	@TrangThaiDuyet char(3)
+AS 
+	BEGIN TRANSACTION
+		BEGIN TRY
+			IF NOT EXISTS ( SELECT MaSoHopDong FROM HOPDONG WHERE MaSoHopDong=@MaSoHopDong)
+				BEGIN
+					PRINT N'Hợp đồng không tồn tại'
+					ROLLBACK TRANSACTION
+					RETURN 1 
+				END
+		
+
+		
+		
+		UPDATE HOPDONG SET MaSoHopDong=@MaSoHopDong, TrangThaiDuyet=@TrangThaiDuyet
+		WHERE MaSoHopDong=@MaSoHopDong
+		WAITFOR DELAY '0:0:10'
+
+		COMMIT TRANSACTION
+
+		RETURN 0
+		END TRY
+		
+		BEGIN CATCH
+			PRINT N'Lỗi hệ thống'
+			ROLLBACK TRANSACTION
+			RETURN 1
+		END CATCH
+
+go
+CREATE PROC DT_XEM_HD
+	@MaSoHopDong VARCHAR(15)
+AS 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED
+BEGIN TRANSACTION
+	BEGIN TRY
+		IF NOT EXISTS ( SELECT MaSoHopDong FROM HOPDONG WHERE MaSoHopDong=@MaSoHopDong)
+			BEGIN
+				PRINT N'Hợp đồng không tồn tại'
+				ROLLBACK TRANSACTION
+				RETURN 1 
+			END
+		SELECT * FROM HOPDONG WHERE MaSoHopDong=@MaSoHopDong	
+		COMMIT TRANSACTION
+		RETURN 0
+		END TRY
+		BEGIN CATCH
+			PRINT N'Lỗi hệ thống'
+			ROLLBACK TRANSACTION
+			RETURN 1
+		END CATCH

@@ -1,0 +1,57 @@
+﻿USE QL_DH_GH
+GO
+CREATE PROC SP_DUYETHOPDONG1
+        @MSHD CHAR(5)
+AS
+BEGIN TRAN
+	BEGIN TRY
+		WAITFOR DELAY '0:0:05'
+		IF NOT EXISTS(SELECT MaSoHopDong FROM HOPDONG HD with (nolock) WHERE HD.MaSoHopDong = @MSHD)
+		BEGIN
+			PRINT N'Hợp đồng không tồn tại'
+			ROLLBACK TRAN
+			RETURN 1
+		END
+
+	END TRY
+	BEGIN CATCH
+		PRINT N'LỖI HỆ THỐNG'
+		ROLLBACK TRAN
+		RETURN 1
+	END CATCH
+UPDATE HOPDONG with(xlock)
+SET TrangThaiDuyet = 'Y'
+WHERE MaSoHopDong = @MSHD
+PRINT 'Hợp đồng được duyệt'
+COMMIT TRAN
+RETURN 0
+
+
+--Khôgn duyệt hợp đồng
+GO
+CREATE PROC SP_DUYETHOPDONG2
+        @MSHD CHAR(5)
+AS
+BEGIN TRAN
+	BEGIN TRY
+		IF NOT EXISTS(SELECT MaSoHopDong FROM HOPDONG HD with(nolock) WHERE HD.MaSoHopDong = @MSHD)
+		BEGIN
+			PRINT N'Hợp đồng không tồn tại'
+			ROLLBACK TRAN
+			RETURN 1
+		END
+		
+	END TRY
+	BEGIN CATCH
+		PRINT N'LỖI HỆ THỐNG'
+		ROLLBACK TRAN
+		RETURN 1
+	END CATCH
+WAITFOR DELAY '0:0:05'
+UPDATE HOPDONG with(xlock)
+SET TrangThaiDuyet = 'N'
+WHERE MaSoHopDong = @MSHD
+PRINT 'Hợp đồng không được duyệt'
+COMMIT TRAN
+RETURN 0
+go

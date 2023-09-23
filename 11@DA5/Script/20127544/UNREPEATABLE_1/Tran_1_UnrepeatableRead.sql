@@ -1,0 +1,1 @@
+exec Sp_NV_LayTongTinTK 'QT1','0123456789'
